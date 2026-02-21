@@ -16,11 +16,23 @@ def parse_condition_intervals(subject_id, folder='data'):
             parts = [p.strip() for p in line.split(';') if p.strip()]
 
             # Extract name and timestamp
-            match = re.match(r'start\s*-\s*(.*?)\s*-\s*([\d.]+)', parts[0])
+            # Find the part containing the name (last 'start - ...' segment)
+            start_parts = [p for p in parts if p.startswith('start')]
+            if not start_parts:
+                continue
+            name_part = start_parts[-1]
+            match = re.match(r'start\s*-\s*(.*?)\s*-\s*([\d.]+)', name_part)
             if not match:
                 continue
             name = match.group(1).strip()
-            timestamp = int(parts[1])
+            # Find the unix timestamp (pure integer among the parts)
+            timestamp = None
+            for p in parts:
+                if re.fullmatch(r'\d+', p):
+                    timestamp = int(p)
+                    break
+            if timestamp is None:
+                continue
             rep = None
             for p in parts[2:]:
                 if 'rep' in p:
