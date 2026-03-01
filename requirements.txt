@@ -1,5 +1,5 @@
 numpy<2.0
 seaborn
 matplotlib
-pandas
+pandas<3.0
 neurokit2
