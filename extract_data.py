@@ -8,7 +8,11 @@ import os
 def parse_condition_intervals(subject_id, folder='data'):
     PARIS_OFFSET_MS = 3_600_000
     lines = []
-    with open(f"{folder}/{subject_id}/{subject_id}_input.csv", 'r') as f:
+    candidates = glob.glob(f"{folder}/{subject_id}/{subject_id}_input*.csv")
+    if not candidates:
+        raise FileNotFoundError(f"No input file found for {subject_id} in {folder}/{subject_id}/")
+    input_file = sorted(candidates)[0]
+    with open(input_file, 'r') as f:
         for line in f:
             line = line.strip()
             if not line:
